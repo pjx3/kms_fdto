@@ -35,3 +35,10 @@ Two threads:-
 - main thread is rendering the triangle using Vulkan (most of this is boilerplate)
 - audio thread polls for ALSA buffer descriptors requesting next audio buffer period & then submits it with snd_pcm_writei
 
+## Dependencies
+
+- vulkan
+- asound2
+- pthreads
+
+
