@@ -54,8 +54,8 @@ char const* g_deviceExtensions[] =
 	VK_KHR_SWAPCHAIN_EXTENSION_NAME
 };
 
-uint32_t							g_renderWidth = 1920;
-uint32_t							g_renderHeight = 1080;
+uint32_t							g_renderWidth = 1080;
+uint32_t							g_renderHeight = 1920;
 uint32_t							g_currentFrameIndex = 0;
 
 VkInstance							g_instance;
@@ -119,6 +119,30 @@ uint32_t				g_numPollDescriptors;
 struct pollfd*			g_pollDescriptors;
 uint8_t*				g_audioBuffer;
 
+static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(
+	VkDebugUtilsMessageSeverityFlagBitsEXT /*messageSeverity*/,
+	VkDebugUtilsMessageTypeFlagsEXT /*messageType*/,
+	const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData,
+	void* /*pUserData*/)
+{
+	printf("DEBUG[%d]: %s\n", g_currentFrameIndex, pCallbackData->pMessage);
+	//assert((messageSeverity & VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT) == 0);
+	return VK_FALSE;
+}
+
+void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo)
+{
+	createInfo = {};
+	createInfo.sType = VK_STRUCTURE_TYPE_DEBUG_UTILS_MESSENGER_CREATE_INFO_EXT;
+	createInfo.messageSeverity = VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT
+		| VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT
+		| VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT;
+	createInfo.messageType = VK_DEBUG_UTILS_MESSAGE_TYPE_GENERAL_BIT_EXT
+		| VK_DEBUG_UTILS_MESSAGE_TYPE_VALIDATION_BIT_EXT
+		| VK_DEBUG_UTILS_MESSAGE_TYPE_PERFORMANCE_BIT_EXT;
+	createInfo.pfnUserCallback = debugCallback;
+}
+
 void createInstance()
 {
 	VkApplicationInfo appInfo = {};
@@ -134,10 +158,12 @@ void createInstance()
 	createInfo.pApplicationInfo = &appInfo;
 	createInfo.enabledExtensionCount = sizeof(g_instanceExtensions) / sizeof(g_instanceExtensions[0]);
 	createInfo.ppEnabledExtensionNames = g_instanceExtensions;
-
-	VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo;
 	createInfo.enabledLayerCount = 0;
-	createInfo.pNext = nullptr;
+	createInfo.ppEnabledLayerNames = nullptr;
+
+	VkDebugUtilsMessengerCreateInfoEXT debugCreateInfo = {};
+	populateDebugMessengerCreateInfo(debugCreateInfo);
+	createInfo.pNext = (VkDebugUtilsMessengerCreateInfoEXT*)&debugCreateInfo;
 
 	VkResult result = vkCreateInstance(&createInfo, nullptr, &g_instance);
 	assert(result == VK_SUCCESS);
