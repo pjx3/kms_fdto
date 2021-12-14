@@ -54,8 +54,8 @@ char const* g_deviceExtensions[] =
 	VK_KHR_SWAPCHAIN_EXTENSION_NAME
 };
 
-uint32_t							g_renderWidth = 1080;
-uint32_t							g_renderHeight = 1920;
+uint32_t							g_renderWidth = 1920;
+uint32_t							g_renderHeight = 1080;
 uint32_t							g_currentFrameIndex = 0;
 
 VkInstance							g_instance;
@@ -184,11 +184,9 @@ void createDirect2DisplaySurface(VkPhysicalDevice physicalDevice, uint32_t width
 			}
 
 			if (mode->parameters.visibleRegion.width == height &&
-				mode->parameters.visibleRegion.height == width &&
-				pDisplayProperties[i].supportedTransforms & VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR)
+				mode->parameters.visibleRegion.height == width)
 			{
 				displayMode = mode->displayMode;
-				surfaceTransform = VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR;
 				foundMode = true;
 				break;
 			}
@@ -1225,7 +1223,7 @@ void waitAndSubmit()
 		}
 	}
 
-#if 1	// this function call causes the flip done timeout
+#if 0	// this function call causes the flip done timeout
 	err = snd_pcm_writei(g_audioInstance, g_audioBuffer, g_period_size);
 	if (err < 0) {
 		printf("Audio write error: %s\n", snd_strerror(err));
