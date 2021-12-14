@@ -27,3 +27,11 @@ Enable DRM debug output to see where the first timeout occurs (during drm_mode_s
 ```
 echo 0x3ff | sudo tee /sys/module/drm/parameters/debug
 ```
+
+## About the code
+
+Two threads:-
+
+- main thread is rendering the triangle using Vulkan (most of this is boilerplate)
+- audio thread polls for ALSA buffer descriptors requesting next audio buffer period & then submits it with snd_pcm_writei
+
