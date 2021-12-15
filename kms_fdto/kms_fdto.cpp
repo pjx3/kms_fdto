@@ -98,7 +98,7 @@ uint32_t g_fragmentShader[] =
 	#include "../kms_ftdo.frag.spv"
 };
 
-char const*				g_audioDevice = "plughw:0,0";
+char const*				g_audioDevice = "default";
 snd_pcm_t*				g_audioInstance = nullptr;
 snd_pcm_hw_params_t*	g_hwparams = nullptr;
 snd_pcm_sw_params_t*	g_swparams = nullptr;
@@ -1249,7 +1249,7 @@ void waitAndSubmit()
 		}
 	}
 
-#if 0	// this function call causes the flip done timeout
+#if 1	// this function call causes the flip done timeout
 	err = snd_pcm_writei(g_audioInstance, g_audioBuffer, g_period_size);
 	if (err < 0) {
 		printf("Audio write error: %s\n", snd_strerror(err));
